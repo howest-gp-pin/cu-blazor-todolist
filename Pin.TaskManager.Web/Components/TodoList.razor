@@ -1,0 +1,57 @@
+﻿
+@if (Items.Count() == 0)
+{
+    <div>You have 0 todo's. Go have a nice day!!</div>
+}
+else
+{
+    if (ItemToDelete == null)
+    {
+        <ul>
+            @foreach (var todo in Items)
+            {
+                <li>
+                    <h4>@todo.Name (@todo.Progress.ToString("P0"))</h4>
+                    <button>Update</button>
+                    <button @onclick="() => DeleteTodo(todo)">Delete</button>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <DeleteTodo Todo="ItemToDelete" OnOk="OnExecuteDelete" OnCancel="OnCancelDelete"></DeleteTodo>
+    }
+}
+
+
+@code {
+    [Inject]
+    public ITodoService TodoService { get; set; }
+
+    public TodoItem ItemToDelete { get; set; } = null;
+
+    public IEnumerable<TodoItem> Items { get; set; } = new List<TodoItem>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        Items = await TodoService.GetAllAsync();
+    }
+
+    private void DeleteTodo(TodoItem itemToDelete)
+    {
+        ItemToDelete = itemToDelete;
+    }
+
+    private void OnCancelDelete()
+    {
+        ItemToDelete = null;
+    }
+
+    private async void OnExecuteDelete()
+    {
+        await TodoService.DeleteAsync(ItemToDelete.Id);
+        ItemToDelete = null;
+    }
+
+}

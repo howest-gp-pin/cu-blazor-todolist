@@ -1,0 +1,30 @@
+﻿
+<div style="border:1px solid black;padding:30px;">
+    <div>@Todo?.Name</div>
+    <div>@Todo?.Progress.ToString("P0")</div>
+    <p>Ben je zeker dat je dit item wil verwijderen?!</p>
+    <button @onclick="Ok">JA</button>
+    <button @onclick="Cancel">Nee</button>
+</div>
+
+@code {
+
+    [Parameter] //input
+    public TodoItem Todo { get; set; }
+
+    [Parameter] // "output"
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter] // "output"
+    public EventCallback OnOk { get; set; }
+
+    private async void Cancel()
+    {
+        await OnCancel.InvokeAsync();
+    }
+
+    private async void Ok()
+    {
+        await OnOk.InvokeAsync();
+    }
+}
